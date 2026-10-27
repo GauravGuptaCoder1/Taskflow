@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>See Task</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+    <%- include("navbar.ejs") %>
+    <main class="task-card">
+        <h2>Title : <%=task.title%></h2>
+        <h3>Description : <%=task.description%></h3>
+        <h5>
+            Status:
+            <span class="status-<%= task.status.toLowerCase().replace(/\s+/g, '-') %>">
+                <%= task.status %>
+            </span>
+        </h5>
+        <h5>Created on : <%=task.task_date%></h5>
+        <h5>
+            Priority:
+            <span class="priority-<%= task.priority.toLowerCase() %>">
+                <%= task.priority %>
+            </span>
+        </h5>
+        <div class="task-actions">
+            <form method="GET" action="/tasks/<%=task.id%>/edit">
+                <button class="edit-button">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    Edit
+                </button>
+            </form>
+            <form method="POST" action="/tasks/<%=task.id%>?_method=DELETE">
+                <button class="delete-button">
+                    <i class="fa-regular fa-trash-can"></i>
+                    Delete
+                </button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

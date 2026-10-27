@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+    <%- include("navbar.ejs") %>
+    <main class="container">
+        <h2>Welcome, Gaurav</h2>
+
+        <div class="stats-container">
+            <!-- Total Tasks -->
+            <a href="/tasks" class="stat-card total-card">
+                <i class="fa-solid fa-list-check stat-icon"></i>
+                <div class="stat-info">
+                    <span class="stat-label">Total Tasks</span>
+                    <span class="stat-number"><%= totalTasks %></span>
+                </div>
+            </a>
+
+            <!-- Pending Tasks -->
+            <a href="/tasks?status=Pending" class="stat-card pending-card">
+                <i class="fa-regular fa-clock stat-icon"></i>
+                <div class="stat-info">
+                    <span class="stat-label">Pending Tasks</span>
+                    <span class="stat-number"><%= pendingTasks %></span>
+                </div>
+            </a>
+
+            <!-- In Progress Tasks -->
+            <a href="/tasks?status=In%20Progress" class="stat-card in-progress-card">
+                <i class="fa-solid fa-rotate stat-icon"></i>
+                <div class="stat-info">
+                    <span class="stat-label">In Progress</span>
+                    <span class="stat-number"><%= inProgressTasks %></span>
+                </div>
+            </a>
+
+            <!-- Completed Tasks -->
+            <a href="/tasks?status=Completed" class="stat-card completed-card">
+                <i class="fa-solid fa-circle-check stat-icon"></i>
+                <div class="stat-info">
+                    <span class="stat-label">Completed Tasks</span>
+                    <span class="stat-number"><%= completedTasks %></span>
+                </div>
+            </a>
+        </div>
+
+
+        <form action="/tasks" method="GET" class="search-form">
+            <input type="text" placeholder="Enter Task Title" name="search">
+
+            <select name="status" id="status">
+                <option value="">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+
+            <select name="priority" id="priority">
+                <option value="">All Priorities</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+                <option value="Low">Low</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+        <div class="active-filters">
+            <h4>Active Filters:</h4>
+            <% if (search) { %>
+                <span class="filter-tag">Search: <%= search %></span>
+            <% } %>
+
+            <% if (status) { %>
+                <span class="filter-tag">Status: <%= status %></span>
+            <% } %>
+
+            <% if (priority) { %>
+                <span class="filter-tag">Priority: <%= priority %></span>
+            <% } %>
+
+            <% if (!search && !status && !priority) { %>
+                <span>No filters applied</span>
+            <% } %>
+
+            <% if (search || status || priority) { %>
+                <a href="/tasks" class="clear-filters">Clear all</a>
+            <% } %>
+        </div>
+
+        <%for (const task of tasks){%>
+            <div class="task-card">
+                <div class="task-title-row">
+                    <form action="/tasks/<%= task.id %>/toggle-completion"
+                            method="POST"
+                            class="completion-form">
+                        <button
+                            type="submit"
+                            class="completion-toggle <%= task.status === 'Completed' ? 'is-completed' : '' %>"
+                            aria-label="<%= task.status === 'Completed' ? 'Mark as incomplete' : 'Mark as completed' %>"
+                            title="<%= task.status === 'Completed' ? 'Mark as incomplete' : 'Mark as completed' %>">
+
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </form>
+
+                    <h3 class="<%= task.status === 'Completed' ? 'task-completed' : '' %>">
+                        <%= task.title %>
+                    </h3>
+                </div>
+
+                <h4><%=task.description%></h4> 
+                <h5>Created on : <%= task.task_date %></h5><br> 
+                <h5>
+                    Status:
+                    <span class="status-<%= task.status.toLowerCase().replace(/\s+/g, '-') %>">
+                        <%= task.status %>
+                    </span>
+                </h5>
+                
+                <h5>
+                    Priority:
+                    <span class="priority-<%= task.priority.toLowerCase() %>">
+                        <%= task.priority %>
+                    </span>
+                </h5>
+                
+                <div class="task-actions">
+                    <form method="GET" action="/tasks/<%=task.id%>">
+                        <button class="details-button">
+                            <i class="fa-regular fa-eye"></i>
+                            Details
+                        </button>
+                    </form>
+                    <form method="GET" action="/tasks/<%=task.id%>/edit">
+                        <button class="edit-button">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            Edit
+                        </button>
+                    </form>
+                    <form method="POST" action="/tasks/<%=task.id%>?_method=DELETE">
+                        <button class="delete-button">
+                            <i class="fa-regular fa-trash-can"></i>
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <%}%>
+        <br>
+        <form method="GET" action="/tasks/new">
+            <button class="add-button">Add new Task</button>
+        </form>
+    </main>
+</body>
+</html>
